@@ -29,6 +29,8 @@ import (
 func main() {
 	g := gorgonia.NewGraph()
 	x, y := getXYMat()
+	plotData(x.Col("sepal_length").Float(), x.Col("sepal_width").Float(), y.Col("species").Float())
+
 	xT := tensor.FromMat64(mat.DenseCopyOf(x))
 	yT := tensor.FromMat64(mat.DenseCopyOf(y))
 
@@ -112,7 +114,6 @@ func getXYMat() (*matrix, *matrix) {
 	defer f.Close()
 	df := dataframe.ReadCSV(f)
 	df.Describe()
-	plotData(df.Col("sepal_length").Float(), df.Col("sepal_width").Float())
 
 	toValue := func(s series.Series) series.Series {
 		records := s.Records()
@@ -129,6 +130,7 @@ func getXYMat() (*matrix, *matrix) {
 
 	xDF := df.Drop("species")
 	yDF := df.Select("species").Capply(toValue)
+	// plotData(df.Col("sepal_length").Float(), df.Col("sepal_width").Float(),yDF.Col("species").Float())
 	numRows, _ := xDF.Dims()
 	xDF = xDF.Mutate(series.New(one(numRows), series.Float, "bias"))
 	fmt.Println(xDF.Describe())
@@ -192,7 +194,7 @@ func save(value gorgonia.Value) error {
 	return nil
 }
 
-func plotData(x []float64, a []float64) []byte {
+func plotData(x []float64, y []float64, a []float64) []byte {
 	p, err := plot.New()
 	if err != nil {
 		log.Fatal(err)
@@ -203,18 +205,15 @@ func plotData(x []float64, a []float64) []byte {
 	p.Y.Label.Text = "width"
 	p.Add(plotter.NewGrid())
 
-	l := len(x) / len(a)
 	for k := 1; k <= 3; k++ {
 		data0 := make(plotter.XYs, 0)
-		for i := 0; i < len(a); i++ {
+		for i := 0; i < len(a)-1; i++ {
 			if k != int(a[i]) {
 				continue
 			}
-			if i*l+1 < 150 {
-				x1 := x[i*l+0] // sepal_length
-				y1 := x[i*l+1] // sepal_width
-				data0 = append(data0, plotter.XY{X: x1, Y: y1})
-			}
+			x1 := x[i]
+			y1 := y[i]
+			data0 = append(data0, plotter.XY{X: x1, Y: y1})
 		}
 		data, err := plotter.NewScatter(data0)
 		if err != nil {
