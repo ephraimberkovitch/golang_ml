@@ -29,7 +29,8 @@ import (
 func main() {
 	g := gorgonia.NewGraph()
 	x, y := getXYMat()
-	plotData(x.Col("sepal_length").Float(), x.Col("sepal_width").Float(), y.Col("species").Float())
+	plotData(x.Col("sepal_length").Float(), x.Col("sepal_width").Float(), y.Col("species").Float(), "/Users/ephraimb/berkotech/golang_ml/iris/sepal.png")
+	plotData(x.Col("petal_length").Float(), x.Col("petal_width").Float(), y.Col("species").Float(), "/Users/ephraimb/berkotech/golang_ml/iris/petal.png")
 
 	xT := tensor.FromMat64(mat.DenseCopyOf(x))
 	yT := tensor.FromMat64(mat.DenseCopyOf(y))
@@ -181,7 +182,7 @@ func one(size int) []float64 {
 }
 
 func save(value gorgonia.Value) error {
-	f, err := os.Create("theta.bin")
+	f, err := os.Create("/Users/ephraimb/berkotech/golang_ml/iris/theta.bin")
 	if err != nil {
 		return err
 	}
@@ -194,7 +195,7 @@ func save(value gorgonia.Value) error {
 	return nil
 }
 
-func plotData(x []float64, y []float64, a []float64) []byte {
+func plotData(x []float64, y []float64, a []float64, fileName string) []byte {
 	p, err := plot.New()
 	if err != nil {
 		log.Fatal(err)
@@ -232,6 +233,6 @@ func plotData(x []float64, y []float64, a []float64) []byte {
 	var b bytes.Buffer
 	writer := bufio.NewWriter(&b)
 	w.WriteTo(writer)
-	ioutil.WriteFile("out.png", b.Bytes(), 0644)
+	ioutil.WriteFile(fileName, b.Bytes(), 0644)
 	return b.Bytes()
 }
