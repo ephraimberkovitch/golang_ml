@@ -1,11 +1,9 @@
 package main
 
 import (
-	"bufio"
-	"bytes"
 	"encoding/gob"
 	"fmt"
-	"io/ioutil"
+	"image/color"
 	"log"
 	"math"
 	"os"
@@ -16,9 +14,7 @@ import (
 	"gonum.org/v1/gonum/mat"
 	"gonum.org/v1/plot"
 	"gonum.org/v1/plot/plotter"
-	"gonum.org/v1/plot/plotutil"
 	"gonum.org/v1/plot/vg"
-	"gonum.org/v1/plot/vg/draw"
 
 	"gorgonia.org/gorgonia"
 	"gorgonia.org/tensor"
@@ -27,7 +23,7 @@ import (
 func main() {
 	g := gorgonia.NewGraph()
 	x, y := getXYMat()
-	plotData(x.Col("export_administration_act_south_africa").Float(), x.Col("superfund_right_to_sue").Float(), y.Col("political_party").Float(), "/Users/ephraimb/berkotech/golang_ml/congress/sa_env_votes.png")
+	plotData(x, y)
 
 	xT := tensor.FromMat64(mat.DenseCopyOf(x))
 	yT := tensor.FromMat64(mat.DenseCopyOf(y))
@@ -205,44 +201,59 @@ func save(value gorgonia.Value) error {
 	return nil
 }
 
-func plotData(x []float64, y []float64, a []float64, fileName string) []byte {
+func plotData(x *matrix, y *matrix) {
+	ptsDems := make(plotter.XYs, 16)
+	ptsReps := make(plotter.XYs, 16)
+
+	for i, _ := range ptsDems {
+		ptsDems[i].X = float64(i + 1)
+		ptsReps[i].X = float64(i + 1)
+
+		votesDems := 0.0
+		votesReps := 0.0
+
+		for j := 0; j < x.DataFrame.Nrow(); j++ {
+			if y.DataFrame.Elem(j, 0).Float() == 1 {
+				votesReps += x.DataFrame.Elem(j, i).Float()
+			} else {
+				votesDems += x.DataFrame.Elem(j, i).Float()
+			}
+		}
+		ptsDems[i].Y = votesDems
+		ptsReps[i].Y = votesReps
+	}
+
+	data := ptsDems
+
 	p, err := plot.New()
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	}
-
-	p.Title.Text = "congress votes"
-	p.X.Label.Text = "south africa export ban"
-	p.Y.Label.Text = "sue environment polluters"
+	p.Title.Text = "Linear Plot"
+	p.X.Label.Text = "Laws"
+	p.Y.Label.Text = "Votes"
 	p.Add(plotter.NewGrid())
 
-	for k := 1; k <= 2; k++ {
-		data0 := make(plotter.XYs, 0)
-		for i := 0; i < len(a)-1; i++ {
-			if k != int(a[i]) {
-				continue
-			}
-			x1 := x[i]
-			y1 := y[i]
-			data0 = append(data0, plotter.XY{X: x1, Y: y1})
-		}
-		data, err := plotter.NewScatter(data0)
-		if err != nil {
-			log.Fatal(err)
-		}
-		data.GlyphStyle.Color = plotutil.Color(k - 1)
-		data.Shape = &draw.PyramidGlyph{}
-		p.Add(data)
-		p.Legend.Add(fmt.Sprint(k), data)
-	}
-
-	w, err := p.WriterTo(4*vg.Inch, 4*vg.Inch, "png")
+	line, points, err := plotter.NewLinePoints(data)
 	if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
-	var b bytes.Buffer
-	writer := bufio.NewWriter(&b)
-	w.WriteTo(writer)
-	ioutil.WriteFile(fileName, b.Bytes(), 0644)
-	return b.Bytes()
+	line.Color = color.RGBA{B: 255, A: 255}
+
+	p.Add(line, points)
+
+	data = ptsReps
+
+	line, points, err = plotter.NewLinePoints(data)
+	if err != nil {
+		log.Panic(err)
+	}
+	line.Color = color.RGBA{R: 255, A: 255}
+
+	p.Add(line, points)
+
+	err = p.Save(10*vg.Centimeter, 5*vg.Centimeter, "/Users/ephraimb/berkotech/golang_ml/congress/votes.png")
+	if err != nil {
+		log.Panic(err)
+	}
 }
