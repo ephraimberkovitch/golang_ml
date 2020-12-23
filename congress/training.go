@@ -63,7 +63,7 @@ func main() {
 	fa := mat.Formatted(getThetaNormal(x, y), mat.Prefix("   "), mat.Squeeze())
 
 	fmt.Printf("ϴ: %v\n", fa)
-	iter := 10000
+	iter := 20000
 	var err error
 	for i := 0; i < iter; i++ {
 		if err = machine.RunAll(); err != nil {

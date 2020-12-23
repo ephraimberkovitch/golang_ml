@@ -56,13 +56,12 @@ func main() {
 		if err = machine.RunAll(); err != nil {
 			log.Fatal(err)
 		}
-		switch math.Round(y.Value().Data().(float64)) {
+		val := math.Round(y.Value().Data().(float64) - 9)
+		switch val {
 		case 1:
-			fmt.Println("You are a probably a democrat")
-		case 2:
 			fmt.Println("You are a probably a republican")
-		default:
-			fmt.Println("You should better establish your own political party!")
+		case 2:
+			fmt.Println("You are a probably a democrat")
 		}
 		machine.Reset()
 	}
