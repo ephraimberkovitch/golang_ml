@@ -63,7 +63,7 @@ func main() {
 	fa := mat.Formatted(getThetaNormal(x, y), mat.Prefix("   "), mat.Squeeze())
 
 	fmt.Printf("ϴ: %v\n", fa)
-	iter := 20000
+	iter := 50000
 	var err error
 	for i := 0; i < iter; i++ {
 		if err = machine.RunAll(); err != nil {
@@ -101,7 +101,7 @@ func accuracy(prediction, y []float64) float64 {
 }
 
 func getXYMat() (*matrix, *matrix) {
-	f, err := os.Open("/Users/ephraimb/berkotech/golang_ml/congress/congressional_voting_dataset_raw.csv")
+	f, err := os.Open("/Users/ephraimb/berkotech/golang_ml/congress/congressional_voting_dataset.csv")
 	if err != nil {
 		log.Fatal(err)
 	}

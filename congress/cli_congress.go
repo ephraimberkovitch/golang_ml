@@ -34,7 +34,7 @@ func main() {
 	y, err := gorgonia.Mul(x, theta)
 	machine := gorgonia.NewTapeMachine(g)
 	defer machine.Close()
-	values[16] = 11
+	values[16] = 1
 	for {
 		values[0] = getInput("handicapped_infants")
 		values[1] = getInput("water_project_cost_sharing")
@@ -56,7 +56,8 @@ func main() {
 		if err = machine.RunAll(); err != nil {
 			log.Fatal(err)
 		}
-		val := math.Round(y.Value().Data().(float64) - 9)
+		val := math.Round(y.Value().Data().(float64))
+		fmt.Print(val)
 		switch val {
 		case 1:
 			fmt.Println("You are a probably a republican")
