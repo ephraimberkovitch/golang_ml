@@ -16,5 +16,6 @@ Machine Learning with Go - Tel Aviv Go Meetup 2021
 * congress/cli_congress.go
 ### Demonstration 6
 * docker run -it -p 8889:8888 -v $(pwd):/usr/share/notebooks gopherdata/gophernotes:latest-ds
+* 
 
 ###### * Please, ensure correct value of current working directory (when running from Goland)
