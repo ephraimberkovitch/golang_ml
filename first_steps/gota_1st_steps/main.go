@@ -26,4 +26,8 @@ func main() {
 	)
 	fmt.Println(mut)
 	fmt.Println(mut2)
+
+	fmt.Println(df.Describe())
+	fmt.Println(df.Dims())
+	fmt.Println(mut2.Dims())
 }

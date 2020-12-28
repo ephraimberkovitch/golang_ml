@@ -101,7 +101,11 @@ func accuracy(prediction, y []float64) float64 {
 }
 
 func getXYMat() (*matrix, *matrix) {
-	f, err := os.Open("/Users/ephraimb/berkotech/golang_ml/congress/congressional_voting_dataset.csv")
+	path, err := os.Getwd()
+	if err != nil {
+		log.Panic(err)
+	}
+	f, err := os.Open(path + "/congressional_voting_dataset.csv")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -188,7 +192,11 @@ func one(size int) []float64 {
 }
 
 func save(value gorgonia.Value) error {
-	f, err := os.Create("/Users/ephraimb/berkotech/golang_ml/congress/theta.bin")
+	path, err := os.Getwd()
+	if err != nil {
+		log.Panic(err)
+	}
+	f, err := os.Create(path + "/theta.bin")
 	if err != nil {
 		return err
 	}
@@ -252,7 +260,11 @@ func plotData(x *matrix, y *matrix) {
 
 	p.Add(line, points)
 
-	err = p.Save(10*vg.Centimeter, 5*vg.Centimeter, "/Users/ephraimb/berkotech/golang_ml/congress/votes.png")
+	path, err := os.Getwd()
+	if err != nil {
+		log.Panic(err)
+	}
+	err = p.Save(10*vg.Centimeter, 5*vg.Centimeter, path+"/votes.png")
 	if err != nil {
 		log.Panic(err)
 	}

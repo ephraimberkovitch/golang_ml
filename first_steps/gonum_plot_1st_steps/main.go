@@ -6,6 +6,7 @@ import (
 	"gonum.org/v1/plot/vg"
 	"image/color"
 	"log"
+	"os"
 )
 
 func main() {
@@ -51,7 +52,11 @@ func main() {
 
 	p.Add(line, points)
 
-	err = p.Save(10*vg.Centimeter, 5*vg.Centimeter, "/Users/ephraimb/berkotech/golang_ml/gonum_plot_1st_steps/plot_example.png")
+	path, err := os.Getwd()
+	if err != nil {
+		log.Panic(err)
+	}
+	err = p.Save(10*vg.Centimeter, 5*vg.Centimeter, path+"/plot_example.png")
 	if err != nil {
 		log.Panic(err)
 	}

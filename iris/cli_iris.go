@@ -15,7 +15,11 @@ import (
 )
 
 func main() {
-	f, err := os.Open("/Users/ephraimb/berkotech/golang_ml/iris/theta.bin")
+	path, err := os.Getwd()
+	if err != nil {
+		log.Panic(err)
+	}
+	f, err := os.Open(path + "/theta.bin")
 	if err != nil {
 		log.Fatal(err)
 	}

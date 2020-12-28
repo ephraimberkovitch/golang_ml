@@ -29,8 +29,13 @@ import (
 func main() {
 	g := gorgonia.NewGraph()
 	x, y := getXYMat()
-	plotData(x.Col("sepal_length").Float(), x.Col("sepal_width").Float(), y.Col("species").Float(), "/Users/ephraimb/berkotech/golang_ml/iris/sepal.png")
-	plotData(x.Col("petal_length").Float(), x.Col("petal_width").Float(), y.Col("species").Float(), "/Users/ephraimb/berkotech/golang_ml/iris/petal.png")
+	path, err := os.Getwd()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	plotData(x.Col("sepal_length").Float(), x.Col("sepal_width").Float(), y.Col("species").Float(), path+"/sepal.png")
+	plotData(x.Col("petal_length").Float(), x.Col("petal_width").Float(), y.Col("species").Float(), path+"/petal.png")
 
 	xT := tensor.FromMat64(mat.DenseCopyOf(x))
 	yT := tensor.FromMat64(mat.DenseCopyOf(y))
@@ -57,7 +62,7 @@ func main() {
 	squaredError := must(gorgonia.Square(must(gorgonia.Sub(pred, Y))))
 	cost := must(gorgonia.Mean(squaredError))
 
-	if _, err := gorgonia.Grad(cost, theta); err != nil {
+	if _, err = gorgonia.Grad(cost, theta); err != nil {
 		log.Fatalf("Failed to backpropagate: %v", err)
 	}
 
@@ -70,8 +75,7 @@ func main() {
 	fa := mat.Formatted(getThetaNormal(x, y), mat.Prefix("   "), mat.Squeeze())
 
 	fmt.Printf("ϴ: %v\n", fa)
-	iter := 10000
-	var err error
+	iter := 100000
 	for i := 0; i < iter; i++ {
 		if err = machine.RunAll(); err != nil {
 			fmt.Printf("Error during iteration: %v: %v\n", i, err)
@@ -108,7 +112,11 @@ func accuracy(prediction, y []float64) float64 {
 }
 
 func getXYMat() (*matrix, *matrix) {
-	f, err := os.Open("/Users/ephraimb/berkotech/golang_ml/iris/iris.csv")
+	path, err := os.Getwd()
+	if err != nil {
+		log.Panic(err)
+	}
+	f, err := os.Open(path + "/iris.csv")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -182,7 +190,11 @@ func one(size int) []float64 {
 }
 
 func save(value gorgonia.Value) error {
-	f, err := os.Create("/Users/ephraimb/berkotech/golang_ml/iris/theta.bin")
+	path, err := os.Getwd()
+	if err != nil {
+		log.Panic(err)
+	}
+	f, err := os.Create(path + "/theta.bin")
 	if err != nil {
 		return err
 	}
