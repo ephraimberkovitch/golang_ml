@@ -73,8 +73,8 @@ func main() {
 	solver := gorgonia.NewVanillaSolver(gorgonia.WithLearnRate(0.001))
 
 	fa := mat.Formatted(getThetaNormal(x, y), mat.Prefix("   "), mat.Squeeze())
-
 	fmt.Printf("ϴ: %v\n", fa)
+
 	iter := 100000
 	for i := 0; i < iter; i++ {
 		if err = machine.RunAll(); err != nil {
