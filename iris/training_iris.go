@@ -34,8 +34,8 @@ func main() {
 		log.Panic(err)
 	}
 
-	plotData(x.Col("sepal_length").Float(), x.Col("sepal_width").Float(), y.Col("species").Float(), path+"/sepal.png")
-	plotData(x.Col("petal_length").Float(), x.Col("petal_width").Float(), y.Col("species").Float(), path+"/petal.png")
+	plotData(x.Col("sepal_length").Float(), x.Col("sepal_width").Float(), y.Col("species").Float(), path+"/sepal.png", "sepal")
+	plotData(x.Col("petal_length").Float(), x.Col("petal_width").Float(), y.Col("species").Float(), path+"/petal.png", "petal")
 
 	xT := tensor.FromMat64(mat.DenseCopyOf(x))
 	yT := tensor.FromMat64(mat.DenseCopyOf(y))
@@ -207,13 +207,13 @@ func save(value gorgonia.Value) error {
 	return nil
 }
 
-func plotData(x []float64, y []float64, a []float64, fileName string) []byte {
+func plotData(x []float64, y []float64, a []float64, fileName string, topic string) []byte {
 	p, err := plot.New()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	p.Title.Text = "sepal length & width"
+	p.Title.Text = topic + " length & width"
 	p.X.Label.Text = "length"
 	p.Y.Label.Text = "width"
 	p.Add(plotter.NewGrid())
